@@ -63,21 +63,30 @@ sensor_offset_outward = 4.0;  // Move sensor outward - achieved by reducing diag
 // Minimum internal space needed
 // Add margin for sensor flange and clearance
 internal_margin = 3.0;
-inner_w = pcb_proj_x + sensor_flange_d / 2 + internal_margin;
-inner_h = pcb_proj_y + sensor_flange_d / 2 + internal_margin;
+inner_w_min = pcb_proj_x + sensor_flange_d / 2 + internal_margin;
+inner_h_min = pcb_proj_y + sensor_flange_d / 2 + internal_margin;
+
+// Target outer dimension for longest side
+target_longest_side = 35.0;
+
+// Calculate outer dimensions - set longest side to target, scale the other proportionally
+outer_w = target_longest_side;
+outer_h = target_longest_side;  // Square base for simplicity
+
+// Inner dimensions derived from outer
+inner_w = outer_w - 2 * wall_t;
+inner_h = outer_h - 2 * wall_t;
 
 // Calculate sensor center Z first, then determine inner_z to fit exactly
 // Sensor needs: base_t + clearance below + sensor_d/2 + offset
-sensor_bottom_clearance = 3.0;  // Minimum clearance below sensor
+sensor_bottom_clearance = 5.0;  // Minimum clearance below sensor (increased by 2mm)
 sensor_z = base_t + sensor_bottom_clearance + sensor_flange_d / 2 + sensor_offset_z;
 
-// Inner height: sensor top must be 2mm below ceiling (lid skirt top)
-sensor_top_clearance = 3.0;  // Gap between sensor top and ceiling
+// Inner height: sensor top must be below ceiling (lid skirt top)
+sensor_top_clearance = 5.0;  // Gap between sensor top and ceiling (decreased by 2mm to maintain total height)
 inner_z = sensor_z + sensor_flange_d / 2 + sensor_top_clearance - base_t;
 
-// Outer dimensions
-outer_w = inner_w + 2 * wall_t;
-outer_h = inner_h + 2 * wall_t;
+// Outer Z dimension
 outer_z = inner_z + base_t + top_t;
 
 // Diagonal cut size (how much to cut from corner)
